@@ -1,21 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deslizador Estilo Libro</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Libro Interactivo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    .book {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      transition: transform 0.6s ease;
+    }
+
+    .page {
+      flex-shrink: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3em;
+      color: white;
+    }
+
+    .page:nth-child(1) { background: crimson; }
+    .page:nth-child(2) { background: darkorange; }
+    .page:nth-child(3) { background: mediumseagreen; }
+    .page:nth-child(4) { background: royalblue; }
+    .page:nth-child(5) { background: rebeccapurple; }
+  </style>
 </head>
 <body>
-  <div class="book-slider">
-    <div class="page" id="page1">Página 1</div>
-    <div class="page" id="page2">Página 2</div>
-    <div class="page" id="page3">Página 3</div>
-    <div class="page" id="page4">Página 4</div>
+  <div class="book" id="book">
+    <div class="page">Página 1</div>
+    <div class="page">Página 2</div>
+    <div class="page">Página 3</div>
+    <div class="page">Página 4</div>
+    <div class="page">Página 5</div>
   </div>
-  <button id="prev">Anterior</button>
-  <button id="next">Siguiente</button>
 
-  <script src="script.js"></script>
+  <script>
+    const book = document.getElementById('book');
+    const totalPages = document.querySelectorAll('.page').length;
+    let currentPage = 0;
+    let startX = 0;
+    let isDragging = false;
+
+    document.addEventListener('mousedown', e => {
+      isDragging = true;
+      startX = e.clientX;
+    });
+
+    document.addEventListener('mouseup', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      const deltaX = e.clientX - startX;
+      if (deltaX > 100 && currentPage > 0) {
+        currentPage--;
+      } else if (deltaX < -100 && currentPage < totalPages - 1) {
+        currentPage++;
+      }
+      updateBook();
+    });
+
+    document.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+    });
+
+    document.addEventListener('touchend', e => {
+      const deltaX = e.changedTouches[0].clientX - startX;
+      if (deltaX > 100 && currentPage > 0) {
+        currentPage--;
+      } else if (deltaX < -100 && currentPage < totalPages - 1) {
+        currentPage++;
+      }
+      updateBook();
+    });
+
+    function updateBook() {
+      book.style.transform = `translateX(-${currentPage * 100}vw)`;
+    }
+  </script>
 </body>
 </html>
